@@ -1,25 +1,97 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Create Clipzy</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+
+<title>Create Clipzy</title>
+
+<style>
+  body {
+    margin: 0;
+    background: black;
+    color: white;
+    font-family: Arial;
+    padding: 20px;
+  }
+
+  h2 {
+    margin-bottom: 20px;
+  }
+
+  input, button {
+    width: 100%;
+    padding: 12px;
+    margin-top: 10px;
+    border-radius: 10px;
+    border: none;
+    font-size: 14px;
+  }
+
+  input {
+    background: #111;
+    color: white;
+  }
+
+  button {
+    background: red;
+    color: white;
+    font-weight: bold;
+  }
+
+  button:active {
+    transform: scale(0.98);
+  }
+
+  .status {
+    margin-top: 15px;
+    font-size: 14px;
+    color: #aaa;
+  }
+
+  .bottom {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 60px;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    backdrop-filter: blur(10px);
+  }
+
+  .bottom a {
+    color: white;
+    text-decoration: none;
+    font-size: 12px;
+  }
+
+  .active {
+    color: red;
+  }
+</style>
 </head>
 
-<body style="background:black;color:white;font-family:Arial;padding:20px;">
+<body>
 
-<h2>Create Video</h2>
+<h2>🎬 Create Video</h2>
 
-<input id="username" placeholder="Nome do perfil"><br><br>
-<input id="title" placeholder="Título do vídeo"><br><br>
-<input type="file" id="file" accept="video/*"><br><br>
+<input id="username" placeholder="Nome do perfil">
+<input id="title" placeholder="Título do vídeo">
+<input type="file" id="file" accept="video/*">
 
-<button onclick="uploadVideo()">Upload</button>
+<button onclick="uploadVideo()">Postar</button>
 
-<p id="status"></p>
+<div class="status" id="status"></div>
 
-<br>
-
-<a href="index.html" style="color:red;">Voltar Home</a>
+<div class="bottom">
+  <a href="index.html">Home</a>
+  <a href="#">Discover</a>
+  <a class="active" href="create.html">Create</a>
+  <a href="#">Notif</a>
+  <a href="#">Profile</a>
+</div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -30,31 +102,32 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 async function uploadVideo() {
-  const username = document.getElementById("username").value;
+  const user = document.getElementById("username").value;
   const title = document.getElementById("title").value;
   const file = document.getElementById("file").files[0];
+  const status = document.getElementById("status");
 
-  if (!username || !title || !file) {
-    document.getElementById("status").innerText = "Preencha tudo!";
+  if (!user || !title || !file) {
+    status.innerText = "Preencha tudo!";
     return;
   }
 
-  document.getElementById("status").innerText = "Enviando vídeo...";
+  status.innerText = "Enviando vídeo...";
 
   const fileName = Date.now() + "-" + file.name;
 
-  // upload storage
+  // 1. upload storage
   const { error: uploadError } = await supabase
     .storage
     .from("videos")
     .upload(fileName, file);
 
   if (uploadError) {
-    document.getElementById("status").innerText = uploadError.message;
+    status.innerText = "Erro upload: " + uploadError.message;
     return;
   }
 
-  // get URL
+  // 2. pegar URL pública
   const { data } = supabase
     .storage
     .from("videos")
@@ -62,23 +135,23 @@ async function uploadVideo() {
 
   const videoUrl = data.publicUrl;
 
-  // save DB
+  // 3. salvar no banco
   const { error: dbError } = await supabase
     .from("videos")
     .insert([
       {
-        user_id: username,
+        user_id: user,
         video_url: videoUrl,
         caption: title
       }
     ]);
 
   if (dbError) {
-    document.getElementById("status").innerText = dbError.message;
+    status.innerText = "Erro DB: " + dbError.message;
     return;
   }
 
-  document.getElementById("status").innerText = "Upload completo!";
+  status.innerText = "Upload completo!";
 }
 </script>
 
