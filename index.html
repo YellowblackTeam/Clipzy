@@ -1,77 +1,86 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Clipzy</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
 
-  <style>
-    body {
-      margin: 0;
-      background: black;
-      font-family: Arial;
-      color: white;
-      overflow: hidden;
-    }
+<title>Clipzy</title>
 
-    .video-container {
-      height: 100vh;
-      scroll-snap-type: y mandatory;
-      overflow-y: scroll;
-    }
+<style>
+  * {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
 
-    .video {
-      height: 100vh;
-      scroll-snap-align: start;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      position: relative;
-    }
+  body {
+    background: black;
+    font-family: Arial;
+    overflow: hidden;
+  }
 
-    video {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
-    }
+  .feed {
+    height: 100vh;
+    overflow-y: scroll;
+    scroll-snap-type: y mandatory;
+  }
 
-    .info {
-      position: absolute;
-      bottom: 80px;
-      left: 15px;
-    }
+  .video {
+    height: 100vh;
+    width: 100vw;
+    scroll-snap-align: start;
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
 
-    .bottom-bar {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      height: 60px;
-      background: #111;
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-    }
+  video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
 
-    .btn {
-      color: white;
-      text-decoration: none;
-      font-size: 12px;
-    }
+  .info {
+    position: absolute;
+    bottom: 90px;
+    left: 15px;
+    color: white;
+  }
 
-    .active {
-      color: red;
-    }
-  </style>
+  .bottom-bar {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    height: 60px;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    backdrop-filter: blur(10px);
+  }
+
+  .btn {
+    color: white;
+    text-decoration: none;
+    font-size: 12px;
+  }
+
+  .active {
+    color: red;
+  }
+</style>
 </head>
 
 <body>
 
-<div class="video-container" id="feed"></div>
+<div class="feed" id="feed"></div>
 
 <div class="bottom-bar">
   <a class="btn active" href="index.html">Home</a>
   <a class="btn" href="#">Discover</a>
   <a class="btn" href="create.html">Create</a>
-  <a class="btn" href="#">Notifications</a>
+  <a class="btn" href="#">Notif</a>
   <a class="btn" href="#">Profile</a>
 </div>
 
@@ -84,64 +93,51 @@ const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
 async function loadVideos() {
-  const { data, error } = await supabase
+  const { data } = await supabase
     .from("videos")
     .select("*")
     .order("created_at", { ascending: false });
 
-  if (error) {
-    console.log(error);
-    return;
-  }
-
   const feed = document.getElementById("feed");
 
-  data.forEach((video, index) => {
+  data.forEach(v => {
     const div = document.createElement("div");
     div.className = "video";
 
     div.innerHTML = `
-      <video class="clipzy-video" loop muted playsinline>
-        <source src="${video.video_url}" type="video/mp4">
+      <video class="clip" muted loop playsinline>
+        <source src="${v.video_url}">
       </video>
 
       <div class="info">
-        <h3>@${video.user_id}</h3>
-        <p>${video.caption}</p>
+        <b>@${v.user_id}</b><br>
+        ${v.caption}
       </div>
     `;
 
     feed.appendChild(div);
   });
 
-  setupAutoplay();
+  setupAutoPlay();
 }
 
-function setupAutoplay() {
-  const videos = document.querySelectorAll(".clipzy-video");
+function setupAutoPlay() {
+  const videos = document.querySelectorAll("video");
 
-  const observer = new IntersectionObserver(
-    (entries) => {
-      entries.forEach(entry => {
-        const video = entry.target;
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      const vid = e.target;
 
-        if (entry.isIntersecting) {
-          // pausa todos
-          videos.forEach(v => v.pause());
+      if (e.isIntersecting) {
+        videos.forEach(v => v.pause());
+        vid.play().catch(() => {});
+      } else {
+        vid.pause();
+      }
+    });
+  }, { threshold: 0.8 });
 
-          // toca só o visível
-          video.play().catch(() => {});
-        } else {
-          video.pause();
-        }
-      });
-    },
-    {
-      threshold: 0.7 // 70% visível
-    }
-  );
-
-  videos.forEach(video => observer.observe(video));
+  videos.forEach(v => obs.observe(v));
 }
 
 loadVideos();
