@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Create Clipzy</title>
+</head>
+
+<body style="background:black;color:white;font-family:Arial;padding:20px;">
+
+<h2>Create Video</h2>
+
+<input id="username" placeholder="Nome do perfil"><br><br>
+<input id="title" placeholder="Título do vídeo"><br><br>
+<input type="file" id="file" accept="video/*"><br><br>
+
+<button onclick="uploadVideo()">Upload</button>
+
+<p id="status"></p>
+
+<br>
+
+<a href="index.html" style="color:red;">Voltar Home</a>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+const SUPABASE_URL = "https://vbxmehiagwjfjmswihwp.supabase.co/rest/v1/";
+const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZieG1laGlhZ3dqZmptc3dpaHdwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1ODY3OTcsImV4cCI6MjA5ODE2Mjc5N30.QTdrQygjdwJahpK-jK9HG0vAAsfy0uWk4ojXW4Tv-oo";
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+async function uploadVideo() {
+  const username = document.getElementById("username").value;
+  const title = document.getElementById("title").value;
+  const file = document.getElementById("file").files[0];
+
+  if (!username || !title || !file) {
+    document.getElementById("status").innerText = "Preencha tudo!";
+    return;
+  }
+
+  document.getElementById("status").innerText = "Enviando vídeo...";
+
+  const fileName = Date.now() + "-" + file.name;
+
+  // upload storage
+  const { error: uploadError } = await supabase
+    .storage
+    .from("videos")
+    .upload(fileName, file);
+
+  if (uploadError) {
+    document.getElementById("status").innerText = uploadError.message;
+    return;
+  }
+
+  // get URL
+  const { data } = supabase
+    .storage
+    .from("videos")
+    .getPublicUrl(fileName);
+
+  const videoUrl = data.publicUrl;
+
+  // save DB
+  const { error: dbError } = await supabase
+    .from("videos")
+    .insert([
+      {
+        user_id: username,
+        video_url: videoUrl,
+        caption: title
+      }
+    ]);
+
+  if (dbError) {
+    document.getElementById("status").innerText = dbError.message;
+    return;
+  }
+
+  document.getElementById("status").innerText = "Upload completo!";
+}
+</script>
+
+</body>
+</html>
