@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Clipzy - Perfil</title>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
+<script type="module" src="https://esm.run/@material/web/all.js"></script>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:Arial,sans-serif;
+    background:#000;
+    color:#fff;
+}
+
+header{
+    position:sticky;
+    top:0;
+    background:#111;
+    height:60px;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    border-bottom:1px solid #333;
+    font-size:20px;
+    font-weight:bold;
+}
+
+.profile{
+    padding:25px;
+    text-align:center;
+}
+
+.avatar{
+    width:110px;
+    height:110px;
+    border-radius:50%;
+    background:#333;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    margin:auto;
+}
+
+.avatar .material-symbols-outlined{
+    font-size:70px;
+}
+
+.username{
+    margin-top:15px;
+    font-size:26px;
+    font-weight:bold;
+}
+
+.handle{
+    color:#aaa;
+    margin-top:5px;
+}
+
+.stats{
+    display:flex;
+    justify-content:center;
+    gap:40px;
+    margin:25px 0;
+}
+
+.stat{
+    text-align:center;
+}
+
+.stat b{
+    display:block;
+    font-size:20px;
+}
+
+.buttons{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    margin-bottom:25px;
+}
+
+.bio{
+    color:#bbb;
+    margin-bottom:30px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:2px;
+    padding-bottom:80px;
+}
+
+.item{
+    aspect-ratio:9/16;
+    background:#222;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+}
+
+.item .material-symbols-outlined{
+    font-size:40px;
+    color:#666;
+}
+
+.bottom-nav{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+    height:70px;
+    background:#111;
+    border-top:1px solid #333;
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+}
+
+.bottom-nav a{
+    color:white;
+    text-decoration:none;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    font-size:12px;
+}
+
+.bottom-nav .material-symbols-outlined{
+    font-size:28px;
+}
+</style>
+</head>
+<body>
+
+<header>
+Perfil
+</header>
+
+<div class="profile">
+
+<div class="avatar">
+<span class="material-symbols-outlined">
+person
+</span>
+</div>
+
+<div class="username">
+Convidado
+</div>
+
+<div class="handle">
+@guest
+</div>
+
+<div class="stats">
+
+<div class="stat">
+<b>0</b>
+Seguindo
+</div>
+
+<div class="stat">
+<b>0</b>
+Seguidores
+</div>
+
+<div class="stat">
+<b>0</b>
+Curtidas
+</div>
+
+</div>
+
+<div class="buttons">
+
+<md-filled-button>
+Entrar
+</md-filled-button>
+
+<md-outlined-button>
+Cadastrar
+</md-outlined-button>
+
+</div>
+
+<div class="bio">
+Entre no Clipzy para publicar vídeos, seguir criadores e curtir conteúdos.
+</div>
+
+</div>
+
+<div class="grid">
+
+<div class="item">
+<span class="material-symbols-outlined">
+movie
+</span>
+</div>
+
+<div class="item">
+<span class="material-symbols-outlined">
+movie
+</span>
+</div>
+
+<div class="item">
+<span class="material-symbols-outlined">
+movie
+</span>
+</div>
+
+<div class="item">
+<span class="material-symbols-outlined">
+movie
+</span>
+</div>
+
+<div class="item">
+<span class="material-symbols-outlined">
+movie
+</span>
+</div>
+
+<div class="item">
+<span class="material-symbols-outlined">
+movie
+</span>
+</div>
+
+</div>
+
+<nav class="bottom-nav">
+
+<a href="index.html">
+<span class="material-symbols-outlined">
+home
+</span>
+Home
+</a>
+
+<a href="#">
+<span class="material-symbols-outlined">
+travel_explore
+</span>
+Descobrir
+</a>
+
+<a href="#">
+<span class="material-symbols-outlined">
+add_box
+</span>
+Create
+</a>
+
+<a href="#">
+<span class="material-symbols-outlined">
+favorite
+</span>
+Atividades
+</a>
+
+<a href="profile.html">
+<span class="material-symbols-outlined">
+person
+</span>
+Perfil
+</a>
+
+</nav>
+
+</body>
+</html>
