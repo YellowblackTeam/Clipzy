@@ -7,9 +7,6 @@
 <title>Clipzy</title>
 
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-
 <script type="module" src="https://esm.run/@material/web/all.js"></script>
 
 <style>
@@ -19,22 +16,374 @@
     box-sizing:border-box;
 }
 
+html{
+    scroll-snap-type:y mandatory;
+}
+
 body{
     background:#000;
     color:#fff;
     font-family:Arial,sans-serif;
-    overflow-y:scroll;
-    scroll-snap-type:y mandatory;
 }
 
 #feed{
-    width:100%;
+    padding-top:60px;
     padding-bottom:80px;
 }
 
 .video-card{
     position:relative;
     width:100%;
+    height:100vh;
+    scroll-snap-align:start;
+    overflow:hidden;
+    background:#000;
+}
+
+.video-card video{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+}
+
+.topbar{
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+    height:60px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:0 15px;
+
+    background:linear-gradient(to bottom,rgba(0,0,0,.8),transparent);
+
+    z-index:1000;
+}
+
+.logo{
+    font-size:28px;
+    font-weight:bold;
+}
+
+.info{
+    position:absolute;
+    left:15px;
+    bottom:90px;
+    max-width:70%;
+}
+
+.info h2{
+    font-size:20px;
+    margin-bottom:6px;
+}
+
+.actions{
+    position:absolute;
+    right:12px;
+    bottom:95px;
+
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    align-items:center;
+}
+
+.actions .contador{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+.actions .contador div{
+    color:white;
+    font-size:12px;
+    text-align:center;
+    margin-top:6px; /* Deixa o texto mais para baixo */
+}
+
+.bottom-nav{
+    position:fixed;
+    left:0;
+    right:0;
+    bottom:0;
+
+    height:70px;
+
+    background:#111;
+
+    border-top:1px solid #333;
+
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+
+    z-index:1000;
+}
+
+.bottom-nav a{
+    color:white;
+    text-decoration:none;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:4px; /* Espaço entre o ícone e o texto */
+    font-size:12px;
+}
+
+.bottom-nav .material-symbols-outlined{
+    font-size:28px;
+}
+</style>
+</head>
+
+<body>
+
+<header class="topbar">
+
+<div class="logo">
+Clipzy
+</div>
+
+<md-filled-tonal-icon-button>
+<span class="material-symbols-outlined">
+search
+</span>
+</md-filled-tonal-icon-button>
+
+</header>
+
+<div id="feed"></div>
+
+<nav class="bottom-nav">
+
+<a href="index.html">
+<span class="material-symbols-outlined">home</span>
+Home
+</a>
+
+<a href="#">
+<span class="material-symbols-outlined">travel_explore</span>
+Descobrir
+</a>
+
+<a href="#">
+<span class="material-symbols-outlined">add_box</span>
+Create
+</a>
+
+<a href="#">
+<span class="material-symbols-outlined">favorite</span>
+Atividades
+</a>
+
+<a href="profile.html">
+<span class="material-symbols-outlined">person</span>
+Perfil
+</a>
+
+</nav>
+
+<script>
+
+// Lista de vídeos do Clipzy
+const biblioteca = [
+{
+    video:"video/video1.mp4",
+    usuario:"@clipzy",
+    titulo:"Bem-vindo ao Clipzy!"
+}
+];
+
+const feed = document.getElementById("feed");
+
+// Reproduz somente o vídeo visível
+const observer = new IntersectionObserver((entries)=>{
+
+    entries.forEach(entry=>{
+
+        const video = entry.target.querySelector("video");
+
+        if(entry.isIntersecting){
+            video.play();
+        }else{
+            video.pause();
+        }
+
+    });
+
+},{threshold:0.75});
+
+function criarVideo(){
+
+    const dados = biblioteca[Math.floor(Math.random()*biblioteca.length)];
+
+    const card = document.createElement("div");
+    card.className="video-card";
+
+    card.innerHTML=`
+
+<video
+src="${dados.video}"
+loop
+muted
+playsinline
+preload="metadata">
+</video>
+
+<div class="info">
+<h2>${dados.usuario}</h2>
+<p>${dados.titulo}</p>
+</div>
+
+<div class="actions">
+
+<div class="contador">
+
+<md-filled-tonal-icon-button class="like">
+<span class="material-symbols-outlined">
+favorite
+</span>
+</md-filled-tonal-icon-button>
+
+<div class="likes">0</div>
+
+</div>
+
+<div class="contador">
+
+<md-filled-tonal-icon-button>
+<span class="material-symbols-outlined">
+chat
+</span>
+</md-filled-tonal-icon-button>
+
+<div>0</div>
+
+</div>
+
+<div class="contador">
+
+<md-filled-tonal-icon-button>
+<span class="material-symbols-outlined">
+share
+</span>
+</md-filled-tonal-icon-button>
+
+<div>Compartilhar</div>
+
+</div>
+
+</div>
+`;
+
+    const like = card.querySelector(".like");
+    const likes = card.querySelector(".likes");
+
+    let curtido=false;
+    let total=0;
+
+    like.onclick=()=>{
+
+        curtido=!curtido;
+
+        if(curtido){
+
+            total++;
+
+            like.style.transform="scale(1)";
+            likes.textContent=total;
+
+        }else{
+
+            total--;
+
+            like.style.transform="scale(1)";
+            likes.textContent=total;
+
+        }
+
+    };
+
+    const video = card.querySelector("video");
+
+    video.onclick=()=>{
+
+        if(video.paused){
+
+            video.play();
+
+        }else{
+
+            video.pause();
+
+        }
+
+    };
+
+    feed.appendChild(card);
+
+    observer.observe(card);
+
+}
+
+// Primeiros vídeos
+for(let i=0;i<8;i++){
+
+    criarVideo();
+
+}
+
+// Feed infinito
+window.addEventListener("scroll",()=>{
+
+    if(window.innerHeight+window.scrollY>=document.body.offsetHeight-1200){
+
+        for(let i=0;i<5;i++){
+
+            criarVideo();
+
+        }
+
+    }
+
+});
+    
+// Mantém no máximo 20 vídeos carregados
+function limparFeed(){
+
+    const cards = document.querySelectorAll(".video-card");
+
+    if(cards.length > 20){
+
+        for(let i = 0; i < 5; i++){
+
+            cards[i].remove();
+
+        }
+
+    }
+
+}
+
+// Sempre que adicionar novos vídeos
+window.addEventListener("scroll",()=>{
+
+    limparFeed();
+
+});
+
+// Destaca o botão Home
+document.querySelectorAll(".bottom-nav a")[0].style.color="#4fc3f7";
+
+</script>
+
+</body>
+</html>    width:100%;
     height:100vh;
     scroll-snap-align:start;
 }
