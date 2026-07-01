@@ -219,40 +219,49 @@ const videos = [
         arquivo: "video/video1.mp4",
         usuario: "@clipzy",
         descricao: "Bem-vindo ao Clipzy!"
-    },
-    {
-        arquivo: "video/video2.mp4",
-        usuario: "@usuario",
-        descricao: "Segundo vídeo"
-    },
-    {
-        arquivo: "video/video3.mp4",
-        usuario: "@convidado",
-        descricao: "Terceiro vídeo"
     }
 ];
 
 const feed = document.getElementById("feed");
 
-videos.forEach(v => {
+const biblioteca = [
+    "video/video1.mp4"
+];
+
+function criarVideo() {
+
+    const arquivo = biblioteca[Math.floor(Math.random() * biblioteca.length)];
 
     const card = document.createElement("div");
     card.className = "video-card";
 
-    const video = document.createElement("video");
-    video.src = v.arquivo;
-    video.loop = true;
-    video.autoplay = true;
-    video.muted = true;
-    video.playsInline = true;
+    card.innerHTML = `
+        <video src="${arquivo}" autoplay muted loop playsinline></video>
 
-    video.addEventListener("click", () => {
-        if(video.paused){
-            video.play();
-        }else{
-            video.pause();
+        <div class="info">
+            <h2>@clipzy</h2>
+            <p>Vídeo aleatório</p>
+        </div>
+    `;
+
+    feed.appendChild(card);
+
+    observer.observe(card);
+}
+
+// Carrega os primeiros vídeos
+for(let i = 0; i < 8; i++){
+    criarVideo();
+}
+
+// Feed infinito
+window.addEventListener("scroll", () => {
+    if(window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000){
+        for(let i = 0; i < 5; i++){
+            criarVideo();
         }
-    });
+    }
+});
 
     const info = document.createElement("div");
     info.className = "info";
