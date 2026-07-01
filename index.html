@@ -1,146 +1,356 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 
 <title>Clipzy</title>
 
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<script type="module" src="https://esm.run/@material/web/all.js"></script>
+
 <style>
-  * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-  }
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-  body {
-    background: black;
-    font-family: Arial;
-    overflow: hidden;
-  }
+body{
+    background:#000;
+    color:#fff;
+    font-family:Arial,sans-serif;
+    overflow-y:scroll;
+    scroll-snap-type:y mandatory;
+}
 
-  .feed {
-    height: 100vh;
-    overflow-y: scroll;
-    scroll-snap-type: y mandatory;
-  }
+#feed{
+    width:100%;
+    padding-bottom:80px;
+}
 
-  .video {
-    height: 100vh;
-    width: 100vw;
-    scroll-snap-align: start;
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+.video-card{
+    position:relative;
+    width:100%;
+    height:100vh;
+    scroll-snap-align:start;
+}
 
-  video {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-  }
+.video-card video{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    background:#000;
+}
 
-  .info {
-    position: absolute;
-    bottom: 90px;
-    left: 15px;
-    color: white;
-  }
+.info{
+    position:absolute;
+    left:15px;
+    bottom:90px;
+}
 
-  .bottom-bar {
-    position: fixed;
-    bottom: 0;
-    width: 100%;
-    height: 60px;
-    background: rgba(0,0,0,0.8);
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    backdrop-filter: blur(10px);
-  }
+.info h2{
+    font-size:20px;
+}
 
-  .btn {
-    color: white;
-    text-decoration: none;
-    font-size: 12px;
-  }
+.info p{
+    opacity:.9;
+}
 
-  .active {
-    color: red;
-  }
+.actions{
+    position:absolute;
+    right:15px;
+    bottom:100px;
+
+    display:flex;
+    flex-direction:column;
+    gap:18px;
+    align-items:center;
+}
+
+.actions md-filled-tonal-icon-button{
+    --md-filled-tonal-icon-button-container-color:#222;
+}
+
+.bottom-nav{
+    position:fixed;
+    bottom:0;
+    left:0;
+    right:0;
+
+    height:70px;
+
+    display:flex;
+    justify-content:space-around;
+    align-items:center;
+
+    background:#111;
+    border-top:1px solid #333;
+}
+
+.bottom-nav a{
+    color:white;
+    text-decoration:none;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    font-size:12px;
+}
+
+.bottom-nav .material-symbols-outlined{
+    font-size:28px;
+}
+  
+.topbar{
+    position:fixed;
+    top:0;
+    left:0;
+    right:0;
+
+    height:60px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    padding:0 15px;
+
+    background:linear-gradient(to bottom,rgba(0,0,0,.75),transparent);
+
+    z-index:1000;
+}
+
+.logo{
+    font-size:28px;
+    font-weight:bold;
+    color:white;
+    letter-spacing:1px;
+}
+
+.info{
+    position:absolute;
+    left:15px;
+    bottom:90px;
+    max-width:70%;
+}
+
+.actions{
+    position:absolute;
+    right:15px;
+    bottom:100px;
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:14px;
+}
+
+.actions div{
+    color:white;
+    font-size:12px;
+    text-align:center;
+}
+  
 </style>
 </head>
-
 <body>
 
-<div class="feed" id="feed"></div>
+<div id="feed"></div>
+  
+<header class="topbar">
 
-<div class="bottom-bar">
-  <a class="btn active" href="index.html">Home</a>
-  <a class="btn" href="#">Discover</a>
-  <a class="btn" href="create.html">Create</a>
-  <a class="btn" href="#">Notif</a>
-  <a class="btn" href="#">Profile</a>
-</div>
+    <div class="logo">
+        Clipzy
+    </div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <md-filled-tonal-icon-button>
+        <span class="material-symbols-outlined">
+            search
+        </span>
+    </md-filled-tonal-icon-button>
 
+</header>
+
+<nav class="bottom-nav">
+
+<a href="index.html">
+<span class="material-symbols-outlined">
+home
+</span>
+Home
+</a>
+
+<a href="#">
+<span class="material-symbols-outlined">
+travel_explore
+</span>
+Descobrir
+</a>
+
+<a href="#">
+<span class="material-symbols-outlined">
+add_box
+</span>
+Create
+</a>
+
+<a href="#">
+<span class="material-symbols-outlined">
+favorite
+</span>
+Atividades
+</a>
+
+<a href="profile.html">
+<span class="material-symbols-outlined">
+person
+</span>
+Perfil
+</a>
+
+</nav>
+  
 <script>
-const SUPABASE_URL = "https://vbxmehiagwjfjmswihwp.supabase.co/rest/v1/";
-const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZieG1laGlhZ3dqZmptc3dpaHdwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODI1ODY3OTcsImV4cCI6MjA5ODE2Mjc5N30.QTdrQygjdwJahpK-jK9HG0vAAsfy0uWk4ojXW4Tv-oo";
+const videos = [
+    {
+        arquivo: "video/video1.mp4",
+        usuario: "@clipzy",
+        descricao: "Bem-vindo ao Clipzy!"
+    },
+    {
+        arquivo: "video/video2.mp4",
+        usuario: "@usuario",
+        descricao: "Segundo vídeo"
+    },
+    {
+        arquivo: "video/video3.mp4",
+        usuario: "@convidado",
+        descricao: "Terceiro vídeo"
+    }
+];
 
-const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const feed = document.getElementById("feed");
 
-async function loadVideos() {
-  const { data } = await supabase
-    .from("videos")
-    .select("*")
-    .order("created_at", { ascending: false });
+videos.forEach(v => {
 
-  const feed = document.getElementById("feed");
+    const card = document.createElement("div");
+    card.className = "video-card";
 
-  data.forEach(v => {
-    const div = document.createElement("div");
-    div.className = "video";
+    const video = document.createElement("video");
+    video.src = v.arquivo;
+    video.loop = true;
+    video.autoplay = true;
+    video.muted = true;
+    video.playsInline = true;
 
-    div.innerHTML = `
-      <video class="clip" muted loop playsinline>
-        <source src="${v.video_url}">
-      </video>
+    video.addEventListener("click", () => {
+        if(video.paused){
+            video.play();
+        }else{
+            video.pause();
+        }
+    });
 
-      <div class="info">
-        <b>@${v.user_id}</b><br>
-        ${v.caption}
-      </div>
+    const info = document.createElement("div");
+    info.className = "info";
+
+    info.innerHTML = `
+        <h2>${v.usuario}</h2>
+        <p>${v.descricao}</p>
     `;
 
-    feed.appendChild(div);
-  });
+    const actions = document.createElement("div");
+    actions.className = "actions";
+  
+  const like = actions.querySelector(".like");
+const texto = like.parentElement.querySelector("div");
 
-  setupAutoPlay();
-}
+let curtido = false;
+let curtidas = 0;
 
-function setupAutoPlay() {
-  const videos = document.querySelectorAll("video");
+like.onclick = () => {
 
-  const obs = new IntersectionObserver((entries) => {
-    entries.forEach(e => {
-      const vid = e.target;
+    curtido = !curtido;
 
-      if (e.isIntersecting) {
-        videos.forEach(v => v.pause());
-        vid.play().catch(() => {});
-      } else {
-        vid.pause();
-      }
+    if(curtido){
+        curtidas++;
+        like.style.transform = "scale(1.2)";
+    }else{
+        curtidas--;
+        like.style.transform = "scale(1)";
+    }
+
+    texto.innerText = curtidas;
+};
+
+    actions.innerHTML = `
+<div>
+
+<md-filled-tonal-icon-button class="like">
+<span class="material-symbols-outlined">
+favorite
+</span>
+</md-filled-tonal-icon-button>
+
+<div>0</div>
+
+</div>
+
+<div>
+
+<md-filled-tonal-icon-button>
+<span class="material-symbols-outlined">
+chat
+</span>
+</md-filled-tonal-icon-button>
+
+<div>0</div>
+
+</div>
+
+<div>
+
+<md-filled-tonal-icon-button>
+<span class="material-symbols-outlined">
+share
+</span>
+</md-filled-tonal-icon-button>
+
+<div>Compartilhar</div>
+
+</div>
+`;
+
+    card.appendChild(video);
+    card.appendChild(info);
+    card.appendChild(actions);
+
+    feed.appendChild(card);
+
+});
+
+const observer = new IntersectionObserver((entries) => {
+
+    entries.forEach(entry => {
+
+        const video = entry.target.querySelector("video");
+
+        if(entry.isIntersecting){
+            video.play();
+        }else{
+            video.pause();
+        }
+
     });
-  }, { threshold: 0.8 });
 
-  videos.forEach(v => obs.observe(v));
-}
+},{threshold:0.75});
 
-loadVideos();
+document.querySelectorAll(".video-card").forEach(card=>{
+    observer.observe(card);
+});
 </script>
 
 </body>
